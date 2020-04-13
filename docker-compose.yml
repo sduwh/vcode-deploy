@@ -1,0 +1,61 @@
+version: "3"
+
+services:
+  vcode-redis:
+    image: "redis:5.0.8"
+    restart: always
+    command: redis-server --requirepass vcodeRedisPassword
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6378:6379"
+
+  vcode-mongodb:
+    image: "mongo:4.2.5"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: vcodeMongoPassword
+      MONGO_INITDB_DATABASE: vcode
+    volumes:
+      - ./data/mongodb:/data/db
+    ports:
+      - "27016:27017"
+
+  vcode-spider:
+    build: /Users/yaorui/Desktop/workplace/vcode-spider/
+    restart: always
+    environment:
+      REDIS_PASSWORD: vcodeRedisPassword
+    volumes:
+      - ./log/vcode-spider:/log/vcode-spider
+    ports:
+      - "8010:80"
+    depends_on:
+      - vcode-redis
+
+  vcode:
+    build: /Users/yaorui/Desktop/workplace/vcode/
+    restart: always
+    environment:
+      MONGODB_USERNAME: root
+      MONGODB_PASSWORD: vcodeMongoPassword
+      REDIS_PASSWORD: vcodeRedisPassword
+    volumes:
+      - ./log/vcode:/var/log/vcode
+      - ./data/vcode/test_case:/app/data/test_case
+    ports:
+      - "8000:8000"
+    depends_on:
+      - vcode-redis
+      - vcode-mongodb
+
+  vcode-web:
+    build: /Users/yaorui/Desktop/workplace/vcode-web/
+    restart: always
+    volumes:
+      - ./log/nginx:/var/log/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - vcode
