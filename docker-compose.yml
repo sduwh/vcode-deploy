@@ -23,7 +23,7 @@ services:
       - "27016:27017"
 
   vcode-spider:
-    build: /Users/yaorui/Desktop/workplace/vcode-spider/
+    image: registry.cn-hangzhou.aliyuncs.com/vcodeteam/vcode-spider
     restart: always
     environment:
       REDIS_PASSWORD: vcodeRedisPassword
@@ -35,7 +35,7 @@ services:
       - vcode-redis
 
   vcode-judger:
-    build: /Users/yaorui/Desktop/workplace/vcode-judger
+    image: registry.cn-hangzhou.aliyuncs.com/vcodeteam/vcode-judger
     restart: always
     environment:
       REDIS_PASSWORD: vcodeRedisPassword
@@ -46,7 +46,7 @@ services:
       - vcode-redis
 
   vcode:
-    build: /Users/yaorui/Desktop/workplace/vcode/
+    image: registry.cn-hangzhou.aliyuncs.com/vcodeteam/vcode
     restart: always
     environment:
       MONGODB_USERNAME: root
@@ -61,7 +61,7 @@ services:
       - vcode-mongodb
 
   vcode-web:
-    build: /Users/yaorui/Desktop/workplace/vcode-web/
+    image: registry.cn-hangzhou.aliyuncs.com/vcodeteam/vcode-web
     restart: always
     volumes:
       - ./log/nginx:/var/log/nginx
